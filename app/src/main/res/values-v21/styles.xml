@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="QuestTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/cardview_light_background</item>
+    </style>
+</resources>

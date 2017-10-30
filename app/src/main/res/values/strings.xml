@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Quest</string>
+    <string name="facebook_app_id">1925086284410324</string>
+    <string name="fb_login_protocol_scheme">fb1925086284410324</string>
+    <string name="login_cancelled">Login has been cancelled.</string>
+    <string name="login_failed">Login has failed.</string>
+    <string name="default_welcome">Welcome User!</string>
+    <string name="fb_prompt">Log in with Facebook:</string>
+    <string name="email_prompt">Log in with email:</string>
+    <string name="email_login_button">Continue with Email:</string>
+    <string name="enter_email_prompt">Email Address:</string>
+    <string name="enter_password_prompt">Password:</string>
+    <string name="email_hint">example@gmail.com</string>
+    <string name="password_hint">password</string>
+    <string name="login_btn_txt">Login</string>
+    <string name="register_btn_txt">Register</string>
+    <string name="signout_btn">Signout</string>
+    <string name="quest_header">Quests:</string>
+</resources>
