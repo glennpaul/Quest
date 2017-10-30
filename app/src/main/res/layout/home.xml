@@ -39,6 +39,12 @@
         android:id="@+id/addQuestbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Quest"/>
+        android:text="@string/addQuestBtnTxt"/>
+
+    <EditText
+        android:id="@+id/etAddQuest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/addQuestEditTextHint"/>
 
 </LinearLayout>

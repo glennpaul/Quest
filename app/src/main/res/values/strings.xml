@@ -16,4 +16,6 @@
     <string name="register_btn_txt">Register</string>
     <string name="signout_btn">Signout</string>
     <string name="quest_header">Quests:</string>
+    <string name="addQuestBtnTxt">Add Quest</string>
+    <string name="addQuestEditTextHint">e.g. Go camping!</string>
 </resources>
