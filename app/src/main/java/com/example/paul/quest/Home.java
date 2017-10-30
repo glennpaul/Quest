@@ -80,27 +80,15 @@ public class Home extends AppCompatActivity {
             Toast.makeText(Home.this,"Current user is null.",Toast.LENGTH_SHORT).show();
         }
 
-        myRef.child(userID).child("num_quests").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.getValue()!=null) {
-                    String header_text = getString(R.string.quest_header) + snapshot.getValue().toString();
-                    header.setText(header_text);
-                }
-                //Toast.makeText(Home.this,userID,Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onCancelled (DatabaseError error) {
-                Log.d("","Failed to read number of quests.", error.toException());
-            }
-        });
-
         myRef.child("QuestList").orderByChild("ID").equalTo(userID).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    if(!postSnapshot.getKey().equals("ID") & postSnapshot.getValue()!=null) {
+                    if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
                         addToQuestList(postSnapshot.getValue().toString());
+                    } else if (postSnapshot.getKey().equals("Count")){
+                        String quest_count_header = "Quests: " + postSnapshot.getValue().toString();
+                        header.setText(quest_count_header);
                     }
                 }
             }
