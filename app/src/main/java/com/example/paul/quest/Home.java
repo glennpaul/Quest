@@ -4,8 +4,8 @@ package com.example.paul.quest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,8 +22,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +69,14 @@ public class Home extends AppCompatActivity {
                 quest_count = String.valueOf(Integer.parseInt(quest_count)+1);
                 myRef.child("QuestList").child(questListID).child(quest_count).setValue(newQuestText.getText().toString());
                 myRef.child("QuestList").child(questListID).child("Count").setValue(quest_count);
+            }
+        });
+
+        quest_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(Home.this,String.valueOf(quests.size() - position), Toast.LENGTH_SHORT).show();
+                removeFromQuestList(myRef.child("QuestList").child("1"),quests.size(), position);
             }
         });
     }
@@ -128,6 +134,8 @@ public class Home extends AppCompatActivity {
             }
         });
 
+
+
     }
 
     public void onDestroy() {
@@ -141,4 +149,8 @@ public class Home extends AppCompatActivity {
         arrayAdapter.notifyDataSetChanged();
     }
 
+    public void removeFromQuestList(DatabaseReference ref, Integer item, Integer position) {
+        ref.child(String.valueOf(item - (1 + position))).removeValue();
+        arrayAdapter.notifyDataSetChanged();
+    }
 }
