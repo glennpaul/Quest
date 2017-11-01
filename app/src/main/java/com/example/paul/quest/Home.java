@@ -36,6 +36,8 @@ public class Home extends AppCompatActivity {
     private List<String> quests;
     private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference(); //get reference for root of database
     private String questListID,quest_count;
+    private String referencedFriend;
+    private boolean friend_activated;
 
     private ChildEventListener latest;
 
@@ -53,9 +55,11 @@ public class Home extends AppCompatActivity {
         header = findViewById(R.id.Quest_header);
         Button sign_out = findViewById(R.id.sign_out);
         Button add_quest_btn = findViewById(R.id.addQuestbtn);
-        Button friend_quests_btn = findViewById(R.id.friendQuestsBtn);
         newQuestText = findViewById(R.id.etAddQuest);
         etFriendName = findViewById(R.id.friend_prompt);
+
+
+        friend_activated = false;
 
         //listener for sign out button, if clicked, sign out of account and go back to login screen
         sign_out.setOnClickListener(new View.OnClickListener() {
@@ -75,53 +79,6 @@ public class Home extends AppCompatActivity {
                 myRef.child("QuestList").child(questListID).child("Count").setValue(quest_count);
             }
         });
-        //go to list of friend quests when friend quest button is pressed
-        friend_quests_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myRef.child("QuestList").orderByChild("ID").equalTo(userID).removeEventListener(latest);
-                myRef.child("QuestList").orderByChild("ID").equalTo(etFriendName.getText().toString()).addChildEventListener(latest = new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        questListID = dataSnapshot.getKey();
-                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
-                                addToQuestList(postSnapshot.getValue().toString());
-                            } else if (postSnapshot.getKey().equals("Count")){
-                                quest_count = postSnapshot.getValue().toString();
-                                String quest_count_header = "Quests: " + quest_count;
-                                header.setText(quest_count_header);
-                            }
-                        }
-                    }
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        quests.clear();
-                        arrayAdapter.notifyDataSetChanged();
-                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
-                                addToQuestList(postSnapshot.getValue().toString());
-                            } else if (postSnapshot.getKey().equals("Count")){
-                                quest_count = postSnapshot.getValue().toString();
-                                String quest_count_header = "Quests: " + quest_count;
-                                header.setText(quest_count_header);
-                            }
-                        }
-                    }
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        quests.clear();
-                        arrayAdapter.notifyDataSetChanged();
-                    }
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError e) {
-                    }
-                });
-            }
-        });
 
         quest_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -134,6 +91,8 @@ public class Home extends AppCompatActivity {
 
     public void onStart() {
         super.onStart();
+
+        Button friend_quests_btn = findViewById(R.id.friendQuestsBtn);
 
         mAuth = FirebaseAuth.getInstance();         //get authorization instance
         if(mAuth.getCurrentUser()!=null) {
@@ -183,6 +142,102 @@ public class Home extends AppCompatActivity {
             public void onCancelled(DatabaseError e) {
             }
         });
+
+        //go to list of friend quests when friend quest button is pressed
+        friend_quests_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!friend_activated) {
+                    friend_activated = true;
+                    referencedFriend = etFriendName.getText().toString();
+                    myRef.child("QuestList").orderByChild("ID").equalTo(userID).removeEventListener(latest);
+                    myRef.child("QuestList").orderByChild("ID").equalTo(referencedFriend).addChildEventListener(latest = new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            questListID = dataSnapshot.getKey();
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
+                                    addToQuestList(postSnapshot.getValue().toString());
+                                } else if (postSnapshot.getKey().equals("Count")){
+                                    quest_count = postSnapshot.getValue().toString();
+                                    String quest_count_header = "Quests: " + quest_count;
+                                    header.setText(quest_count_header);
+                                }
+                            }
+                        }
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                            quests.clear();
+                            arrayAdapter.notifyDataSetChanged();
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
+                                    addToQuestList(postSnapshot.getValue().toString());
+                                } else if (postSnapshot.getKey().equals("Count")){
+                                    quest_count = postSnapshot.getValue().toString();
+                                    String quest_count_header = "Quests: " + quest_count;
+                                    header.setText(quest_count_header);
+                                }
+                            }
+                        }
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            quests.clear();
+                            arrayAdapter.notifyDataSetChanged();
+                        }
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError e) {
+                        }
+                    });
+
+                } else {
+                    myRef.child("QuestList").orderByChild("ID").equalTo(referencedFriend).removeEventListener(latest);
+                    myRef.child("QuestList").orderByChild("ID").equalTo(userID).addChildEventListener(latest = new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            questListID = dataSnapshot.getKey();
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
+                                    addToQuestList(postSnapshot.getValue().toString());
+                                } else if (postSnapshot.getKey().equals("Count")){
+                                    quest_count = postSnapshot.getValue().toString();
+                                    String quest_count_header = "Quests: " + quest_count;
+                                    header.setText(quest_count_header);
+                                }
+                            }
+                        }
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                            quests.clear();
+                            arrayAdapter.notifyDataSetChanged();
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
+                                    addToQuestList(postSnapshot.getValue().toString());
+                                } else if (postSnapshot.getKey().equals("Count")){
+                                    quest_count = postSnapshot.getValue().toString();
+                                    String quest_count_header = "Quests: " + quest_count;
+                                    header.setText(quest_count_header);
+                                }
+                            }
+                        }
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            quests.clear();
+                            arrayAdapter.notifyDataSetChanged();
+                        }
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError e) {
+                        }
+                    });
+                    friend_activated = false;
+                }
+            }
+        });
     }
 
     public void onDestroy() {
@@ -201,4 +256,5 @@ public class Home extends AppCompatActivity {
         ref.child(String.valueOf(item - (1 + position))).removeValue();//removes item in quests list at signified position
         arrayAdapter.notifyDataSetChanged();
     }
+
 }
