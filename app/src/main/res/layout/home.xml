@@ -47,4 +47,17 @@
         android:layout_height="wrap_content"
         android:hint="@string/addQuestEditTextHint"/>
 
+
+    <Button
+        android:id="@+id/friendQuestsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/friend_quest_btn"/>
+
+    <EditText
+        android:id="@+id/friend_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/friend_prompt"/>
+
 </LinearLayout>
