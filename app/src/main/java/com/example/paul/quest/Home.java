@@ -76,7 +76,7 @@ public class Home extends AppCompatActivity {
 
         //grab quest list and create listener for value change
         setListener(userID);
-        
+
         add_quest_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,10 +131,18 @@ public class Home extends AppCompatActivity {
                 return false;
             }
         });
-    }
 
-    public void onStart() {
-        super.onStart();
+
+        Button fbtn = findViewById(R.id.friends_button);
+        //listener for sign out button, if clicked, sign out of account and go back to login screen
+        fbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(new Intent(getApplicationContext(),Friends.class));
+            }
+        });
+
     }
 
     public void onDestroy() {
@@ -196,5 +204,4 @@ public class Home extends AppCompatActivity {
             }
         });
     }
-
 }
