@@ -49,6 +49,10 @@ public class Home extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         final ListView quest_list  = findViewById(R.id.quest_list);
+
+
+
+
         quests = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, quests);
         quest_list.setAdapter(arrayAdapter);
