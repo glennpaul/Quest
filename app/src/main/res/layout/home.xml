@@ -35,6 +35,9 @@
     </ListView>
 
 
+
+
+
     <Button
         android:id="@+id/addQuestbtn"
         android:layout_width="wrap_content"
@@ -45,8 +48,8 @@
         android:id="@+id/etAddQuest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/addQuestEditTextHint"/>
-
+        android:hint="@string/addQuestEditTextHint"
+        android:textAlignment="center"/>
 
     <Button
         android:id="@+id/friendQuestsBtn"
@@ -58,6 +61,7 @@
         android:id="@+id/friend_prompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/friend_prompt"/>
+        android:hint="@string/friend_prompt"
+        android:textAlignment="center"/>
 
 </LinearLayout>
