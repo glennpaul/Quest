@@ -3,6 +3,7 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:padding="16dp"
     android:orientation="vertical"
+    android:background="@color/email_green"
     android:gravity="center_horizontal"
     >
 
@@ -20,30 +21,12 @@
         android:text="@string/quest_header"
         />
 
-
-
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="400dp"
+        android:background="@color/colorAccent"
         android:id="@+id/rv"
         />
-    <!--<ListView-->
-        <!--android:id="@+id/quest_list"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="400dp"-->
-        <!--android:layout_marginBottom="10dp"-->
-        <!--android:layout_marginTop="5dp"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:cacheColorHint="@android:color/transparent"-->
-        <!--android:divider="#CCCCCC"-->
-        <!--android:dividerHeight="1dp"-->
-        <!--android:paddingLeft="2dp"-->
-        <!--android:paddingRight="2dp" >-->
-    <!--</ListView>-->
-
-
-
-
 
     <Button
         android:id="@+id/addQuestbtn"
@@ -71,12 +54,10 @@
         android:hint="@string/friend_prompt"
         android:textAlignment="center"/>
 
-
-
     <Button
         android:id="@+id/friends_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Friends"/>
+        android:text="@string/friend_button_text"/>
 
 </LinearLayout>

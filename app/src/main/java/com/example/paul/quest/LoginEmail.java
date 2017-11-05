@@ -28,7 +28,6 @@ public class LoginEmail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.login_email);
-
         Button login_btn, register;
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -36,7 +35,6 @@ public class LoginEmail extends AppCompatActivity {
         register = findViewById(R.id.register_btn);
 
         mAuth = FirebaseAuth.getInstance();
-
         if (mAuth.getCurrentUser() != null) {
             finish();
             startActivity(new Intent(this, Home.class));
@@ -52,7 +50,6 @@ public class LoginEmail extends AppCompatActivity {
                 callLogin(getEmail,getPassword);//call function to login with grabbed username and login
             }
         });
-
         //listener for register button
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +59,6 @@ public class LoginEmail extends AppCompatActivity {
                 callRegister(getEmail,getPassword);//call function to register with grabbed username and password
             }
         });
-
     }
 
     //Start sign in process
@@ -77,13 +73,12 @@ public class LoginEmail extends AppCompatActivity {
                         }
                         else {//if successful sign in, go to home home screen
                             Intent intent = new Intent(LoginEmail.this, Home.class);
-                            finish();
                             startActivity(intent);
+                            finish();
                         }
                     }
                 });
     }
-
 
     //Function to register a new account
     private void callRegister(String email,String password) {
@@ -104,7 +99,6 @@ public class LoginEmail extends AppCompatActivity {
                     }
                 });
     }
-
 
     //Create Account
     private void CreateProfile() {

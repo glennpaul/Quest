@@ -43,27 +43,24 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         RecyclerView rv = findViewById(R.id.rv);
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
-
         quests = new ArrayList<>();
         questAdapter = new QuestAdapter(quests);
         rv.setAdapter(questAdapter);
 
-
         header = findViewById(R.id.Quest_header);
         Button sign_out = findViewById(R.id.sign_out);
         Button add_quest_btn = findViewById(R.id.addQuestbtn);
+        Button friend_quests_btn = findViewById(R.id.friendQuestsBtn);
+        Button fbtn = findViewById(R.id.friends_button);
         newQuestText = findViewById(R.id.etAddQuest);
         etFriendName = findViewById(R.id.friend_prompt);
 
-
-        Button friend_quests_btn = findViewById(R.id.friendQuestsBtn);
         friend_activated = false;
 
         //grab current user and ID for use of grabbing quest list
@@ -108,8 +105,7 @@ public class Home extends AppCompatActivity {
         sign_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth.signOut();
-                LoginManager.getInstance().logOut();
+                sign_out();
                 finish();
                 startActivity(new Intent(getApplicationContext(),MainActivity.class));
             }
@@ -124,7 +120,6 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        Button fbtn = findViewById(R.id.friends_button);
         //listener for sign out button, if clicked, sign out of account and go back to login screen
         fbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,13 +132,17 @@ public class Home extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
+        sign_out();
+    }
+
+    public void sign_out() {
         //sign out before leaving app
         mAuth.signOut();
         LoginManager.getInstance().logOut();
     }
 
     public void addToQuestList(String item) {
-        quests.add(new Quest(item, true,myRef));//adds quest to end of list
+        quests.add(new Quest(item, false,myRef));//adds quest to end of list
     }
 
     public static void removeFromQuestList(DatabaseReference ref, Integer position) {

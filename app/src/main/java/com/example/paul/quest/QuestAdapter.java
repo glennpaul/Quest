@@ -51,7 +51,6 @@ public class QuestAdapter extends RecyclerView.Adapter<QuestAdapter.CustomViewHo
                 @Override
                 public boolean onLongClick(View view) {
                     DatabaseReference reference = quests.get(getAdapterPosition()).parent_reference;
-                    Toast.makeText(view.getContext(),"LONG CLICK",Toast.LENGTH_SHORT).show();
                     Home.removeFromQuestList(reference.child("QuestList").child("1"),getAdapterPosition());
                     notifyDataSetChanged();
                     return false;

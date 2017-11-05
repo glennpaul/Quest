@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
-        //private TextView fb_prompt, email_prompt;
 
 
     @Override
@@ -40,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
         Button email_login_btn;
         fb_button = findViewById(R.id.login_button);
         email_login_btn = findViewById(R.id.email_login_btn);
-            //fb_prompt = findViewById(R.id.fb_login_prompt);
-            //email_prompt = findViewById(R.id.email_login_prompt);
 
         //set FB permissions and callback manager
         fb_button.setReadPermissions("email", "public_profile");
@@ -79,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
         if(mAuth.getCurrentUser()!=null) {
             Intent intent = new Intent(this, Home.class);
             startActivity(intent);
-            //Toast.makeText(MainActivity.this,mAuth.getCurrentUser().getUid(),Toast.LENGTH_SHORT).show();
-            //finish();
+            finish();
         } else {
             Log.d("GPS","No user logged in."); //Toast.makeText(MainActivity.this,"user is null",Toast.LENGTH_SHORT).show();//add for debugging
         }
@@ -98,11 +94,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //finish();
-                            //Toast.makeText(MainActivity.this,"SUCCESS",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(MainActivity.this, Home.class);
                             startActivity(intent);
-
+                            finish();
                         } else {
                             Toast.makeText(MainActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
                         }

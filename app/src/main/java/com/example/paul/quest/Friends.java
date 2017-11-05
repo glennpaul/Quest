@@ -23,22 +23,10 @@ public class Friends extends AppCompatActivity {
 
         RecyclerView rv = findViewById(R.id.rv);
         rv.setHasFixedSize(true);
-
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
 
-        ArrayList<Quest> quests = new ArrayList<>();
-
-        Quest drink_water = new Quest("Drink some water", true, myRef);
-        quests.add(drink_water);
-        Quest eat = new Quest("Eat something.", true, myRef);
-        quests.add(eat);
-        Quest sleep = new Quest("Sleep", false, myRef);
-        quests.add(sleep);
-
-        QuestAdapter questAdapter = new QuestAdapter(quests);
-        rv.setAdapter(questAdapter);
-
+        ArrayList friends = new ArrayList<>();
+        //create and adapter then set it
     }
-
 }

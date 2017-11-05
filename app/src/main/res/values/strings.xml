@@ -20,4 +20,5 @@
     <string name="addQuestEditTextHint">e.g. Go camping!</string>
     <string name="friend_quest_btn">Friend Quests</string>
     <string name="friend_prompt">Friend name&#8230;</string>
+    <string name="friend_button_text">Friend Page</string>
 </resources>
