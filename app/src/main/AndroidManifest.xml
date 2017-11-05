@@ -39,6 +39,7 @@
         </activity>
         <activity android:name=".Home"></activity>
         <activity android:name=".LoginEmail"></activity>
+        <activity android:name=".Friends"></activity>
     </application>
 
 </manifest>
