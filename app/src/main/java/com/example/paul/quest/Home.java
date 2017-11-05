@@ -1,10 +1,8 @@
 package com.example.paul.quest;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -14,7 +12,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Home extends AppCompatActivity {
 
@@ -67,7 +65,7 @@ public class Home extends AppCompatActivity {
         friend_activated = false;
 
         //grab current user and ID for use of grabbing quest list
-        mAuth = FirebaseAuth.getInstance();         //get authorization instance
+        mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser()!=null) {
             FirebaseUser current_user = mAuth.getCurrentUser();
             userID = current_user.getUid();
@@ -78,7 +76,15 @@ public class Home extends AppCompatActivity {
 
         //grab quest list and create listener for value change
         setListener(userID);
-
+        
+        add_quest_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                quest_count = String.valueOf(Integer.parseInt(quest_count)+1);
+                myRef.child("QuestList").child(questListID).child(quest_count).setValue(newQuestText.getText().toString());
+                myRef.child("QuestList").child(questListID).child("Count").setValue(quest_count);
+            }
+        });
         //go to list of friend quests when friend quest button is pressed
         friend_quests_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +95,6 @@ public class Home extends AppCompatActivity {
                     referencedFriend = etFriendName.getText().toString();
                     myRef.child("QuestList").orderByChild("ID").equalTo(userID).removeEventListener(latest);
                     setListener(referencedFriend);
-
                 } else {
                     myRef.child("QuestList").orderByChild("ID").equalTo(referencedFriend).removeEventListener(latest);
                     setListener(userID);
@@ -97,8 +102,6 @@ public class Home extends AppCompatActivity {
                 }
             }
         });
-
-
         //listener for sign out button, if clicked, sign out of account and go back to login screen
         sign_out.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,16 +121,16 @@ public class Home extends AppCompatActivity {
                 myRef.child("QuestList").child(questListID).child("Count").setValue(quest_count);
             }
         });
-        //listener for clicks in the array list for deleting quests
-        quest_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        //listener for long clicks in the array list for deleting quests
+        quest_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(Home.this,String.valueOf(quests.size()), Toast.LENGTH_SHORT).show();3
-                removeFromQuestList(myRef.child("QuestList").child(questListID),position);
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Toast.makeText(Home.this,String.valueOf(quests.size()), Toast.LENGTH_SHORT).show();
+                removeFromQuestList(myRef.child("QuestList").child(questListID),i);
+                return false;
             }
         });
-
-
     }
 
     public void onStart() {
@@ -149,20 +152,9 @@ public class Home extends AppCompatActivity {
         ref.child(String.valueOf(position+1)).removeValue();//removes item in quests list at signified position, use +1 since position of quest list starts at 0
     }
 
-    public void delay(int time) {
-        try {
-            synchronized(this){
-                wait(time);
-            }
-        }
-        catch(InterruptedException ex){
-            Log.d("GPS", "delay: failed");
-        }
-    }
-
-    //set the listener to constantly update quest list
-    //takes in a String that indicates the UserID that indicates the correct quest list
     public void setListener(String ID) {
+        //set the listener to constantly update quest list
+        //takes in a String that indicates the UserID that indicates the correct quest list
         myRef.child("QuestList").orderByChild("ID").equalTo(ID).addChildEventListener(latest = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -181,7 +173,6 @@ public class Home extends AppCompatActivity {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 quests.clear();
-                arrayAdapter.notifyDataSetChanged();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
                         addToQuestList(postSnapshot.getValue().toString());
