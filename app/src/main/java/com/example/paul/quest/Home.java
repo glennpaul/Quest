@@ -60,8 +60,6 @@ public class Home extends AppCompatActivity {
 
 
         Button friend_quests_btn = findViewById(R.id.friendQuestsBtn);
-
-
         friend_activated = false;
 
         //listener for sign out button, if clicked, sign out of account and go back to login screen
@@ -87,8 +85,8 @@ public class Home extends AppCompatActivity {
         quest_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(Home.this,String.valueOf(quests.size() - position), Toast.LENGTH_SHORT).show();
-                removeFromQuestList(myRef.child("QuestList").child("1"),quests.size(), position);
+                //Toast.makeText(Home.this,String.valueOf(quests.size()), Toast.LENGTH_SHORT).show();3
+                removeFromQuestList(myRef.child("QuestList").child(questListID),position);
             }
         });
         //go to list of friend quests when friend quest button is pressed
@@ -188,7 +186,6 @@ public class Home extends AppCompatActivity {
             }
         });
 
-
         //grab current user and ID for use of grabbing quest list
         mAuth = FirebaseAuth.getInstance();         //get authorization instance
         if(mAuth.getCurrentUser()!=null) {
@@ -198,6 +195,7 @@ public class Home extends AppCompatActivity {
         } else {
             Toast.makeText(Home.this,"Current user is null.",Toast.LENGTH_SHORT).show();
         }
+
         //grab quest list and create listener for value change
         myRef.child("QuestList").orderByChild("ID").equalTo(userID).addChildEventListener(latest = new ChildEventListener() {
             @Override
@@ -221,6 +219,7 @@ public class Home extends AppCompatActivity {
                     if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
                         addToQuestList(postSnapshot.getValue().toString());
                     } else if (postSnapshot.getKey().equals("Count")){
+                        //if count value changes, update quest list count header
                         quest_count = postSnapshot.getValue().toString();
                         String quest_count_header = "Quests: " + quest_count;
                         header.setText(quest_count_header);
@@ -254,12 +253,12 @@ public class Home extends AppCompatActivity {
     }
 
     public void addToQuestList(String item) {
-        quests.add(0,item);//adds quest at position zero in display
+        quests.add(quests.size(),item);//adds quest to end of list
         arrayAdapter.notifyDataSetChanged();
     }
 
-    public void removeFromQuestList(DatabaseReference ref, Integer item, Integer position) {
-        ref.child(String.valueOf(item - (1 + position))).removeValue();//removes item in quests list at signified position
+    public void removeFromQuestList(DatabaseReference ref, Integer position) {
+        ref.child(String.valueOf(position+1)).removeValue();//removes item in quests list at signified position, use +1 since position of quest list starts at 0
         arrayAdapter.notifyDataSetChanged();
     }
 
