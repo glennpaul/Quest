@@ -1,22 +1,22 @@
 package com.example.paul.quest;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 
 public class QuestAdapter extends RecyclerView.Adapter<QuestAdapter.CustomViewHolder>{
 
-    Context context;
-    ArrayList<Quest> quests;
+    private ArrayList<Quest> quests;
 
-    public QuestAdapter(Context context, ArrayList<Quest> quests) {
-        this.context = context;
+    QuestAdapter(ArrayList<Quest> quests) {
         this.quests = quests;
     }
 
@@ -39,14 +39,24 @@ public class QuestAdapter extends RecyclerView.Adapter<QuestAdapter.CustomViewHo
         return quests.size();
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder {
+    class CustomViewHolder extends RecyclerView.ViewHolder {
         TextView text;
         CheckBox box;
 
-        public  CustomViewHolder(View view) {
+        CustomViewHolder(View view) {
             super(view);
             text = view.findViewById(R.id.textView);
             box = view.findViewById(R.id.checkBox);
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    DatabaseReference reference = quests.get(getAdapterPosition()).parent_reference;
+                    Toast.makeText(view.getContext(),"LONG CLICK",Toast.LENGTH_SHORT).show();
+                    Home.removeFromQuestList(reference.child("QuestList").child("1"),getAdapterPosition());
+                    notifyDataSetChanged();
+                    return false;
+                }
+            });
         }
     }
 }

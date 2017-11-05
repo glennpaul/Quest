@@ -3,13 +3,12 @@ package com.example.paul.quest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,23 +22,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class Home extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private String userID;
-    private ArrayAdapter<String> arrayAdapter;
     private TextView header;
     private EditText newQuestText, etFriendName;
-    private List<String> quests;
     private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference(); //get reference for root of database
     private String questListID,quest_count;
     private String referencedFriend;
     private boolean friend_activated;
 
     private ChildEventListener latest;
+    private ArrayList<Quest> quests;
+    private QuestAdapter questAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +46,14 @@ public class Home extends AppCompatActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        final ListView quest_list  = findViewById(R.id.quest_list);
-
-
-
+        RecyclerView rv = findViewById(R.id.rv);
+        rv.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rv.setLayoutManager(llm);
 
         quests = new ArrayList<>();
-        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, quests);
-        quest_list.setAdapter(arrayAdapter);
+        questAdapter = new QuestAdapter(quests);
+        rv.setAdapter(questAdapter);
 
 
         header = findViewById(R.id.Quest_header);
@@ -126,23 +124,11 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        //listener for long clicks in the array list for deleting quests
-        quest_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Toast.makeText(Home.this,String.valueOf(quests.size()), Toast.LENGTH_SHORT).show();
-                removeFromQuestList(myRef.child("QuestList").child(questListID),i);
-                return false;
-            }
-        });
-
-
         Button fbtn = findViewById(R.id.friends_button);
         //listener for sign out button, if clicked, sign out of account and go back to login screen
         fbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
                 startActivity(new Intent(getApplicationContext(),Friends.class));
             }
         });
@@ -157,10 +143,10 @@ public class Home extends AppCompatActivity {
     }
 
     public void addToQuestList(String item) {
-        quests.add(quests.size(),item);//adds quest to end of list
+        quests.add(new Quest(item, true,myRef));//adds quest to end of list
     }
 
-    public void removeFromQuestList(DatabaseReference ref, Integer position) {
+    public static void removeFromQuestList(DatabaseReference ref, Integer position) {
         ref.child(String.valueOf(position+1)).removeValue();//removes item in quests list at signified position, use +1 since position of quest list starts at 0
     }
 
@@ -180,7 +166,7 @@ public class Home extends AppCompatActivity {
                         header.setText(quest_count_header);
                     }
                 }
-                arrayAdapter.notifyDataSetChanged();
+                questAdapter.notifyDataSetChanged();
             }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -195,7 +181,7 @@ public class Home extends AppCompatActivity {
                         header.setText(quest_count_header);
                     }
                 }
-                arrayAdapter.notifyDataSetChanged();
+                questAdapter.notifyDataSetChanged();
             }
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {

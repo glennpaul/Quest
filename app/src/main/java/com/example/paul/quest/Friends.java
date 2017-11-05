@@ -6,10 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 public class Friends extends AppCompatActivity {
 
+
+    private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference(); //get reference for root of database
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,14 +29,14 @@ public class Friends extends AppCompatActivity {
 
         ArrayList<Quest> quests = new ArrayList<>();
 
-        Quest drink_water = new Quest("Drink some water", true);
+        Quest drink_water = new Quest("Drink some water", true, myRef);
         quests.add(drink_water);
-        Quest eat = new Quest("Eat something.", true);
+        Quest eat = new Quest("Eat something.", true, myRef);
         quests.add(eat);
-        Quest sleep = new Quest("Sleep", false);
+        Quest sleep = new Quest("Sleep", false, myRef);
         quests.add(sleep);
 
-        QuestAdapter questAdapter = new QuestAdapter(getApplicationContext(),quests);
+        QuestAdapter questAdapter = new QuestAdapter(quests);
         rv.setAdapter(questAdapter);
 
     }
