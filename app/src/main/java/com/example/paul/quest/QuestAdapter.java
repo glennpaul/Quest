@@ -6,16 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 
 public class QuestAdapter extends RecyclerView.Adapter<QuestAdapter.CustomViewHolder>{
 
     private ArrayList<Quest> quests;
-
     QuestAdapter(ArrayList<Quest> quests) {
         this.quests = quests;
     }
@@ -47,15 +43,6 @@ public class QuestAdapter extends RecyclerView.Adapter<QuestAdapter.CustomViewHo
             super(view);
             text = view.findViewById(R.id.textView);
             box = view.findViewById(R.id.checkBox);
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    DatabaseReference reference = quests.get(getAdapterPosition()).parent_reference;
-                    Home.removeFromQuestList(reference.child("QuestList").child("1"),getAdapterPosition());
-                    notifyDataSetChanged();
-                    return false;
-                }
-            });
         }
     }
 }
