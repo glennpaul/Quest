@@ -53,7 +53,7 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //setup layout
+        //setup layout with widgets
         setContentView(R.layout.home);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         header = findViewById(R.id.Quest_header);
@@ -65,7 +65,7 @@ public class Home extends AppCompatActivity {
         etFriendName = findViewById(R.id.friend_prompt);
         friend_activated = false;
 
-        //setup recycler view
+        //setup recycler view and adaptor
         RecyclerView rv = findViewById(R.id.rv);
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -73,6 +73,8 @@ public class Home extends AppCompatActivity {
         quests = new ArrayList<>();
         questAdapter = new QuestAdapter(quests);
         rv.setAdapter(questAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(rv);
 
         //grab current user and ID for use of grabbing quest list
         mAuth = FirebaseAuth.getInstance();
@@ -87,15 +89,7 @@ public class Home extends AppCompatActivity {
         //grab quest list and create listener for value change
         setListener(userID);
 
-        add_quest_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quest_count = String.valueOf(Integer.parseInt(quest_count)+1);
-                myRef.child("QuestList").child(questListID).child(quest_count).setValue(newQuestText.getText().toString());
-                myRef.child("QuestList").child(questListID).child("Count").setValue(quest_count);
-            }
-        });
-        //go to list of friend quests when friend quest button is pressed
+        //add listener for friend quest list button, if clicked it pulls up list fo quests for specified friend
         friend_quests_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,7 +106,8 @@ public class Home extends AppCompatActivity {
                 }
             }
         });
-        //listener for sign out button, if clicked, sign out of account and go back to login screen
+
+        //add listener for sign out button, if clicked, sign out of account and go back to login screen
         sign_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,13 +116,17 @@ public class Home extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(),MainActivity.class));
             }
         });
-        //listener for add_quest_btn to the specified quest in the edit text
+
+        //add listener for add_quest_btn, if clicked it adds the specified quest in the edit text to the current quest list
         add_quest_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 quest_count = String.valueOf(Integer.parseInt(quest_count)+1);
                 myRef.child("QuestList").child(questListID).child(quest_count).setValue(newQuestText.getText().toString());
                 myRef.child("QuestList").child(questListID).child("Count").setValue(quest_count);
+                addToQuestList(newQuestText.getText().toString(),NULL);
+                String quest_count_header = "Quests: " + quest_count;
+                header.setText(quest_count_header);
             }
         });
 
@@ -138,84 +137,24 @@ public class Home extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(),Friends.class));
             }
         });
-
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
-                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            boolean slid;//boolean to tell onMoved function if movement trigger was a slide or drag
-            @Override
-            public boolean onMove(RecyclerView recyclerView, final RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                moveItem(viewHolder.getAdapterPosition(),target.getAdapterPosition());
-                slid=false;
-                return true;
-            }
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                removeFromQuestList(myRef.child("QuestList").child(questListID),viewHolder.getAdapterPosition()+1);
-                slid = true;
-                questAdapter.notifyItemRemoved(viewHolder.getLayoutPosition());
-            }
-            @Override
-            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                super.clearView(recyclerView, viewHolder);
-                if (!slid) {
-                    questAdapter.notifyDataSetChanged();
-                    if (fromPosition!=-1) {
-                        if (fromPosition == toPosition) {
-                            fromPosition = -1;
-                            toPosition = -1;
-                            return;
-                        }
-                        fromPosition++;
-                        toPosition++;
-                        int i = fromPosition;
-                        Toast.makeText(Home.this,"from " + Integer.toString(fromPosition) + " to " + toPosition, Toast.LENGTH_SHORT).show();
-                        if (fromPosition > toPosition) {
-                            while (i >= toPosition) {
-                                myRef.child("QuestList").child(questListID).child(String.valueOf(i)).setValue(quests.get(i-1).name);
-                                i--;
-                            }
-                        } else {
-                            while (i <= toPosition) {
-                                myRef.child("QuestList").child(questListID).child(String.valueOf(i)).setValue(quests.get(i-1).name);
-                                i++;
-                            }
-                        }
-                    }
-                }
-            }
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive)
-            {
-                float topY = viewHolder.itemView.getTop() + dY;
-                float bottomY = topY + viewHolder.itemView.getHeight();
-                if (topY < 0)
-                {
-                    dY = 0;
-                }
-                else if (bottomY > recyclerView.getHeight())
-                {
-                    dY = recyclerView.getHeight() - viewHolder.itemView.getHeight() - viewHolder.itemView.getTop();
-                }
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(rv);
-
     }
 
     public void addToQuestList(String item, int position) {
         if (position==NULL) {
             quests.add(new Quest(item, false,myRef));//adds quest to end of list
-            questAdapter.notifyDataSetChanged();
         } else {
             quests.add(position,new Quest(item,false,myRef));
         }
+        questAdapter.notifyDataSetChanged();
     }
 
     public void removeFromQuestList(DatabaseReference ref, Integer position) {
-        ref.child(String.valueOf(position)).removeValue();//removes item in quests list at signified position
+        quest_count = String.valueOf(Integer.parseInt(quest_count)-1);
+        ref.child("QuestList").child(questListID).child(String.valueOf(position)).removeValue();//removes item in quests list at signified position
         quests.remove(position-1);
+        String quest_count_header = "Quests: " + quest_count;
+        header.setText(quest_count_header);
+        questAdapter.notifyDataSetChanged();
     }
 
     public void setListener(String ID) {
@@ -239,18 +178,6 @@ public class Home extends AppCompatActivity {
             }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                quests.clear();
-                //Toast.makeText(Home.this,"CHANGED",Toast.LENGTH_SHORT).show();
-                questListID = dataSnapshot.getKey();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
-                        addToQuestList(postSnapshot.getValue().toString(),NULL);
-                    } else if (postSnapshot.getKey().equals("Count")){
-                        quest_count = postSnapshot.getValue().toString();
-                        String quest_count_header = "Quests: " + quest_count;
-                        header.setText(quest_count_header);
-                    }
-                }
             }
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -294,5 +221,66 @@ public class Home extends AppCompatActivity {
         super.onDestroy();
         sign_out();
     }
+
+
+    //ItemTouchHelper to deal with RecyclerView Gestures
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                boolean slid;//boolean to tell onMoved function if movement trigger was a slide or drag
+                @Override
+                public boolean onMove(RecyclerView recyclerView, final RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                    moveItem(viewHolder.getAdapterPosition(),target.getAdapterPosition());
+                    slid=false;
+                    return true;
+                }
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                    removeFromQuestList(myRef,viewHolder.getAdapterPosition()+1);
+                    slid = true;
+                }
+                @Override
+                public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                    super.clearView(recyclerView, viewHolder);
+                    if (!slid) {
+                        if (fromPosition!=-1) {
+                            if (fromPosition == toPosition) {
+                                fromPosition = -1;
+                                toPosition = -1;
+                                return;
+                            }
+                            fromPosition++;
+                            toPosition++;
+                            int i = fromPosition;
+                            if (fromPosition > toPosition) {
+                                while (i >= toPosition) {
+                                    myRef.child("QuestList").child(questListID).child(String.valueOf(i)).setValue(quests.get(i-1).name);
+                                    i--;
+                                }
+                            } else {
+                                while (i <= toPosition) {
+                                    myRef.child("QuestList").child(questListID).child(String.valueOf(i)).setValue(quests.get(i-1).name);
+                                    i++;
+                                }
+                            }
+                            fromPosition = -1;
+                            questAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+                @Override
+                public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive)
+                {
+                    float topY = viewHolder.itemView.getTop() + dY;
+                    float bottomY = topY + viewHolder.itemView.getHeight();
+                    if (topY < 0)
+                    {
+                        dY = 0;
+                    }
+                    else if (bottomY > recyclerView.getHeight())
+                    {
+                        dY = recyclerView.getHeight() - viewHolder.itemView.getHeight() - viewHolder.itemView.getTop();
+                    }
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                }
+            };
 
 }

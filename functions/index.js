@@ -19,23 +19,37 @@ admin.initializeApp(functions.config().firebase);
 //   })
 	
 	
-exports.reOrdering = functions.database
+exports.order = functions.database
 	.ref('/QuestList/{user_no}/{wildcard}')
 	.onDelete(event => {		
 		return promise = event.data.ref.parent.once('value')
 			.then(snap => {
-				var count = 1
+				var data = {}
+				var prop_name = ''
+				var counts = 1
 				snap.forEach(function(childSnapshot){
 					var keys = childSnapshot.key
-					if (keys != count && keys != 'Count' && keys != 'ID') {
-						event.data.ref.parent.child(count).set(childSnapshot.val())	
+					if (keys == counts || keys == counts + 1) {
+						data[counts] = childSnapshot.val()
+					} else if (keys == 'Count') {
+						data['Count'] = counts-1
+					} else {
+						data['ID'] = childSnapshot.val()
 					}
-					count++
-				})
-				event.data.ref.parent.child(count-2).remove()
-				event.data.ref.parent.child('Count').set(count-3)
+					counts++
+				})	
+				event.data.ref.parent.set(data)
 			})
 	})
+	
+	
+					//if (keys == 'Count') {
+					//	data['Count'] = counts
+					//} else if (keys == 'ID') {
+					//	data['ID'] = childSnapshot.val()
+					//} else {
+					//	data[counts] = childSnapshot.val()
+					//}
 	
 	
 exports.createQuestList = functions.auth.user()
