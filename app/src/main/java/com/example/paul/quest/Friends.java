@@ -1,27 +1,28 @@
 package com.example.paul.quest;
 
-
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
 public class Friends extends AppCompatActivity {
-
-    private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference(); //get reference for root of database
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends);
 
+        StorageReference mStorage;
         TextView Name = findViewById(R.id.tv_Name);
         TextView ID = findViewById(R.id.tv_ID);
         FirebaseAuth mAuth;
@@ -38,19 +39,12 @@ public class Friends extends AppCompatActivity {
             Name.setText(temp);
             temp = "ID: " + userID;
             ID.setText(temp);
+            mStorage = FirebaseStorage.getInstance().getReference().child(userID + "_profile_picture.jpg");
+            ImageView profile_pic = findViewById(R.id.imageView);
+            Glide.with(this).using(new FirebaseImageLoader()).load(mStorage).into(profile_pic);
         } else {
             Toast.makeText(Friends.this,"Current user is null.", LENGTH_SHORT).show();
         }
-
-
-
-//        RecyclerView rv = findViewById(R.id.rv);
-//        rv.setHasFixedSize(true);
-//        LinearLayoutManager llm = new LinearLayoutManager(this);
-//        rv.setLayoutManager(llm);
-//
-//        ArrayList friends = new ArrayList<>();
-
 
 
 
