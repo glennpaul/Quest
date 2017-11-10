@@ -59,7 +59,7 @@ public class Home extends AppCompatActivity {
         Button sign_out = findViewById(R.id.sign_out);
         Button add_quest_btn = findViewById(R.id.addQuestbtn);
         Button friend_quests_btn = findViewById(R.id.friendQuestsBtn);
-        Button fbtn = findViewById(R.id.friends_button);
+        Button fbtn = findViewById(R.id.profile);
         newQuestText = findViewById(R.id.etAddQuest);
         etFriendName = findViewById(R.id.friend_prompt);
         friend_activated = false;
@@ -162,7 +162,6 @@ public class Home extends AppCompatActivity {
         myRef.child("QuestList").orderByChild("ID").equalTo(ID).addChildEventListener(latest = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Toast.makeText(Home.this,"ADDED",Toast.LENGTH_SHORT).show();
                 questListID = dataSnapshot.getKey();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     if(!postSnapshot.getKey().equals("ID") & !postSnapshot.getKey().equals("Count") & postSnapshot.getValue() != null) {
@@ -212,13 +211,14 @@ public class Home extends AppCompatActivity {
 
     public void sign_out() {
         //sign out before leaving app
+        myRef.child("QuestList").orderByChild("ID").equalTo(userID).removeEventListener(latest);
         mAuth.signOut();
         LoginManager.getInstance().logOut();
     }
 
     public void onDestroy() {
         super.onDestroy();
-        sign_out();
+        //sign_out();
     }
 
     //ItemTouchHelper to deal with RecyclerView Gestures

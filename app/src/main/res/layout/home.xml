@@ -3,27 +3,22 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:padding="16dp"
     android:orientation="vertical"
-    android:background="@color/email_green"
+    android:background="@color/colorAccent"
     android:gravity="center_horizontal"
     >
-
-    <Button
-        android:id="@+id/sign_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/signout_btn"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/Quest_header"
+        android:paddingBottom="10dp"
         android:textSize="18sp"
         android:text="@string/quest_header"
         />
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="360dp"
+        android:layout_height="365dp"
         android:background="@drawable/rounded"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
@@ -57,9 +52,15 @@
         android:textAlignment="center"/>
 
     <Button
-        android:id="@+id/friends_button"
+        android:id="@+id/profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/friend_button_text"/>
+
+    <Button
+        android:id="@+id/sign_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/signout_btn"/>
 
 </LinearLayout>
