@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/email_login_button"
-        android:background="@color/email_green"
+        android:background="@drawable/rounded"
         android:textColor="@color/white"
         android:fontFamily="sans-serif"
         android:textAllCaps="false"

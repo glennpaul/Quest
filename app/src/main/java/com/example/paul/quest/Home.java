@@ -44,7 +44,6 @@ public class Home extends AppCompatActivity {
     private ArrayList<Quest> quests;
     private QuestAdapter questAdapter;
 
-
     int fromPosition=-1;
     int toPosition=-1;
     String oldValue;
@@ -148,7 +147,7 @@ public class Home extends AppCompatActivity {
         questAdapter.notifyDataSetChanged();
     }
 
-    public void removeFromQuestList(DatabaseReference ref, Integer position) {
+    public void removeFromQuestList(DatabaseReference ref, final Integer position) {
         quest_count = String.valueOf(Integer.parseInt(quest_count)-1);
         ref.child("QuestList").child(questListID).child(String.valueOf(position)).removeValue();//removes item in quests list at signified position
         quests.remove(position-1);
@@ -221,7 +220,6 @@ public class Home extends AppCompatActivity {
         super.onDestroy();
         sign_out();
     }
-
 
     //ItemTouchHelper to deal with RecyclerView Gestures
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {

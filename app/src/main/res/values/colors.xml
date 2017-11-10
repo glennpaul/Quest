@@ -2,8 +2,8 @@
 <resources>
     <color name="colorPrimary">#8a4caf50</color>
     <color name="colorPrimaryDark">#347237</color>#
-    <color name="colorAccent">#f46f63</color>
-    <color name="email_green">#00cc99</color>
+    <color name="colorAccent">#000000</color>
+    <color name="email_green">#8b8b8b</color>
     <color name="white">#ffffff</color>
 
 </resources>

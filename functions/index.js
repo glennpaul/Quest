@@ -37,19 +37,10 @@ exports.order = functions.database
 						data['ID'] = childSnapshot.val()
 					}
 					counts++
-				})	
+				})
 				event.data.ref.parent.set(data)
 			})
 	})
-	
-	
-					//if (keys == 'Count') {
-					//	data['Count'] = counts
-					//} else if (keys == 'ID') {
-					//	data['ID'] = childSnapshot.val()
-					//} else {
-					//	data[counts] = childSnapshot.val()
-					//}
 	
 	
 exports.createQuestList = functions.auth.user()

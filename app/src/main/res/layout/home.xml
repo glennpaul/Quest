@@ -23,8 +23,10 @@
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:background="@color/colorAccent"
+        android:layout_height="360dp"
+        android:background="@drawable/rounded"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:id="@+id/rv"
         />
 
